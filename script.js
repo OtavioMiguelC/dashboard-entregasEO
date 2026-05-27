@@ -825,12 +825,12 @@ if (btnGenerateEmail) {
                         <table width="100%" cellpadding="0" cellspacing="0" border="0">
                             <tr>
                                 <td style="color: #fffffe;">
-                                    <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #fffffe !important;">
-                                        <span style="color: #fffffe;"><font color="#fffffe">[HERWEG] ${transp} - Notas pendentes</font></span>
-                                    </h2>
-                                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #fffffe !important;">
-                                        <span style="color: #fffffe;"><font color="#fffffe">Farol de entregas por status</font></span>
-                                    </p>
+                                    <div style="margin: 0; font-size: 22px; font-weight: 700; color: #fffffe !important;">
+                                        <span style="color: #fffffe;"><font color="#fffffe">Consolida — Relatório de Performance</font></span>
+                                    </div>
+                                    <div style="margin: 5px 0 0 0; font-size: 14px; color: #fffffe !important;">
+                                        <span style="color: #fffffe;"><font color="#fffffe">Farol de entregas por status — ${transp}</font></span>
+                                    </div>
                                 </td>
                                 <td align="right" width="160">
                                     <table cellpadding="8" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color: #ffffff; border-radius: 6px;">
@@ -1002,7 +1002,7 @@ if (btnCopyAndOpen) {
             
             const destinatarios = document.getElementById('emailDestinos').value.trim();
             const transp = document.getElementById('emailSelectTransp').value;
-            const assunto = encodeURIComponent(`Cobrança Logística - Notas Pendentes (${transp})`);
+            const assunto = encodeURIComponent(`[HERWEG] ${transp} - Notas pendentes`);
             
             window.location.href = `mailto:${destinatarios}?subject=${assunto}`;
             
