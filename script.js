@@ -818,28 +818,25 @@ if (btnGenerateEmail) {
         let html = `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; color: #333333; max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background-color: #ffffff;">
             
-            <!-- Cabeçalho -->
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius: 8px 8px 0 0;">
+            <!-- Barra decorativa roxa -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                    <td bgcolor="#5E17EB" style="background-color: #5E17EB; padding: 25px 30px;">
-                        <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#5E17EB" style="background-color: #5E17EB;">
+                    <td bgcolor="#5E17EB" style="background-color: #5E17EB; height: 6px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+                </tr>
+            </table>
+
+            <!-- Cabeçalho -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td style="padding: 20px 30px; border-bottom: 1px solid #e2e8f0;">
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
                             <tr>
-                                <td bgcolor="#5E17EB" style="background-color: #5E17EB; color: white;">
-                                    <div style="margin: 0; font-size: 22px; font-weight: 700; color: white !important;">
-                                        <span style="color: white;"><font color="white">Consolida — Relatório de Performance</font></span>
-                                    </div>
-                                    <div style="margin: 5px 0 0 0; font-size: 14px; color: white !important;">
-                                        <span style="color: white;"><font color="white">Farol de entregas por status — ${transp}</font></span>
-                                    </div>
+                                <td valign="middle">
+                                    <div style="margin: 0; font-size: 20px; font-weight: 700; color: #5E17EB;">Consolida — Relatório de Performance</div>
+                                    <div style="margin: 5px 0 0 0; font-size: 14px; color: #718096;">Farol de entregas por status — ${transp}</div>
                                 </td>
-                                <td align="right" width="160">
-                                    <table cellpadding="8" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color: #ffffff; border-radius: 6px;">
-                                        <tr>
-                                            <td bgcolor="#ffffff" style="background-color: #ffffff; border-radius: 6px;">
-                                                <img src="https://raw.githubusercontent.com/OtavioMiguelC/dashboard-entregasEO/main/img/Consolida.png" alt="Consolida" width="140" style="display: block; border: none;">
-                                            </td>
-                                        </tr>
-                                    </table>
+                                <td align="right" width="160" valign="middle">
+                                    <img src="https://raw.githubusercontent.com/OtavioMiguelC/dashboard-entregasEO/main/img/Consolida.png" alt="Consolida" width="150" style="display: block; border: none;">
                                 </td>
                             </tr>
                         </table>
