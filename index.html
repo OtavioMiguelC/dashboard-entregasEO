@@ -89,11 +89,12 @@
                     </div>
                     <div class="filter-group">
                         <label>Situação da Entrega</label>
-                        <select id="filterSituacao">
-                            <option value="">Todas</option>
-                            <option value="no prazo">No prazo</option>
-                            <option value="atrasado">Atrasado</option>
-                            <option value="sem prazo">Sem prazo</option>
+                        <select id="filterSituacao" class="form-control">
+                            <option value="">Todas as Situações</option>
+                            <option value="No prazo">No Prazo / Aguardando</option>
+                            <option value="Atrasado">Atrasado</option>
+                            <option value="Sem prazo">Sem Prazo</option>
+                            <option value="Entregue sem prazo">Entregue Sem Prazo</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -177,12 +178,13 @@
                         <thead>
                             <tr>
                                 <th>Transportadora</th>
-                                <th>Volumetria Total</th>
-                                <th>Notas No Prazo</th>
-                                <th>Notas Atrasadas</th>
-                                <th>Sem Prazo/Info</th>
+                                <th>Total Notas</th>
+                                <th>No Prazo / Aguardando</th>
+                                <th>Atrasadas</th>
+                                <th>Sem Prazo</th>
+                                <th>Entr. Sem Prazo</th>
                                 <th>% Atraso</th>
-                                <th>Status Geral</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody id="rankingBody">
