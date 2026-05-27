@@ -817,7 +817,7 @@ if (btnGenerateEmail) {
                 <h3 style="margin-top: 0; font-size: 18px; color: #2d3748;">Bom dia, equipe <strong>${transp}</strong>,</h3>
                 <p style="font-size: 15px; color: #4a5568; line-height: 1.5; margin-bottom: 25px;">
                     Acompanhamos a performance das entregas usando um <strong>farol por cores</strong> para leitura executiva. 
-                    Abaixo constam as notas que exigem atualização ou justificativa no sistema.
+                    Identificamos <strong>${notasEmail.length}</strong> ${notasEmail.length === 1 ? 'nota fiscal que requer' : 'notas fiscais que requerem'} atualização de status ou justificativa no sistema.
                 </p>
 
                 <!-- Alertas -->
