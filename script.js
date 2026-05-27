@@ -901,12 +901,19 @@ if (btnGenerateEmail) {
                 badgeColor = "#3b82f6"; badgeBg = "#dbeafe"; textColor = "#1d4ed8";
             }
             
+            const formatShortDate = (str) => {
+                if (!str || str === '-') return '-';
+                return String(str).split(' ')[0];
+            };
+            
+            const prazoCurto = formatShortDate(n.prazoEntrega);
+            
             html += `
                         <tr>
                             <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; color: #1a202c; font-weight: 500;">${n.nfe || '-'}</td>
                             <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; color: #4a5568;">${n.docFrete || '-'}</td>
                             <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; color: #4a5568;">${n.destino || '-'}</td>
-                            <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; color: #4a5568;">${n.prazoEntrega || '-'}</td>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; color: #4a5568;">${prazoCurto}</td>
                             <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; text-align: center;">
                                 <span style="background-color: ${badgeBg}; color: ${textColor}; border: 1px solid ${badgeColor}; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase;">
                                     ${n.situacao}
