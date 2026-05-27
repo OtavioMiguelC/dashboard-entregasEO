@@ -17,14 +17,26 @@
 
     <!-- MURALHA DE LOGIN -->
     <div id="loginWall" class="login-wall">
-        <div class="login-card glass">
-            <h2>Consolida BPO Logístico</h2>
-            <p>Faça login para acessar o painel de operações</p>
-            <div class="login-form">
-                <input type="email" id="loginEmail" placeholder="Seu e-mail">
-                <input type="password" id="loginPassword" placeholder="Sua senha">
-                <button id="doLoginBtn" class="btn btn-primary" style="width:100%">Entrar no Sistema</button>
-                <div id="loginError" style="color:var(--danger); margin-top:10px; font-size:0.9rem;"></div>
+        <div class="login-wrapper">
+            <div class="login-brand">
+                <div class="logo-icon-large">📦</div>
+                <h1>CONSOLIDA</h1>
+                <span>Logística Integrada</span>
+            </div>
+            <div class="login-card glass">
+                <h2>Acesso ao Painel</h2>
+                <div class="login-form">
+                    <div class="input-group">
+                        <label>E-mail Corporativo</label>
+                        <input type="email" id="loginEmail" placeholder="nome@consolida.com">
+                    </div>
+                    <div class="input-group">
+                        <label>Senha</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••">
+                    </div>
+                    <button id="doLoginBtn" class="login-btn">Entrar</button>
+                    <div id="loginError" class="error-msg"></div>
+                </div>
             </div>
         </div>
     </div>
