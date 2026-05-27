@@ -819,14 +819,18 @@ if (btnGenerateEmail) {
         <div style="font-family: 'Segoe UI', Arial, sans-serif; color: #333333; max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background-color: #ffffff;">
             
             <!-- Cabeçalho -->
-            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius: 8px 8px 0 0;">
                 <tr>
-                    <td bgcolor="#5E17EB" style="background-color: #5E17EB; padding: 25px 30px;">
+                    <td bgcolor="#5E17EB" style="background-color: #5E17EB; padding: 25px 30px; border-radius: 8px 8px 0 0;">
                         <table width="100%" cellpadding="0" cellspacing="0" border="0">
                             <tr>
                                 <td style="color: #ffffff;">
-                                    <h2 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff;">Consolida — Relatório de Performance</h2>
-                                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #e9d5ff;">Farol de entregas por status — ${transp}</p>
+                                    <h2 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff !important;">
+                                        <font color="#ffffff">Consolida — Relatório de Performance</font>
+                                    </h2>
+                                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #ffffff !important;">
+                                        <font color="#ffffff">Farol de entregas por status — ${transp}</font>
+                                    </p>
                                 </td>
                                 <td align="right" width="130">
                                     <table cellpadding="8" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color: #ffffff; border-radius: 6px;">
