@@ -439,35 +439,48 @@ function renderRegionsChart() {
     const ctx = document.getElementById('regionsChart').getContext('2d');
     const colors = getChartColors();
     
-    const counts = {};
+    const stats = {};
     filteredData.forEach(d => {
-        if(d.destino && (d.situacao === 'Atrasado' || d.situacao === 'Sem prazo')) {
-            counts[d.destino] = (counts[d.destino] || 0) + 1;
+        if(!d.destino) return;
+        if(d.situacao === 'Atrasado' || d.situacao === 'Sem prazo') {
+            if(!stats[d.destino]) stats[d.destino] = { atraso: 0, semPrazo: 0 };
+            if(d.situacao === 'Atrasado') stats[d.destino].atraso++;
+            if(d.situacao === 'Sem prazo') stats[d.destino].semPrazo++;
         }
     });
 
-    const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 10);
+    const sorted = Object.entries(stats)
+        .sort((a,b) => (b[1].atraso + b[1].semPrazo) - (a[1].atraso + a[1].semPrazo))
+        .slice(0, 10);
     
     if (charts.regions) charts.regions.destroy();
 
     charts.regions = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: sorted.map(i => i[0]),
-            datasets: [{
-                label: 'Atrasos / Sem Prazo',
-                data: sorted.map(i => i[1]),
-                backgroundColor: colors.danger,
-                borderRadius: 4
-            }]
+            labels: sorted.map(i => i[0].length > 15 ? i[0].substring(0, 15) + '...' : i[0]),
+            datasets: [
+                {
+                    label: 'Atrasado',
+                    data: sorted.map(i => i[1].atraso),
+                    backgroundColor: colors.danger,
+                    borderRadius: 2
+                },
+                {
+                    label: 'Sem Prazo',
+                    data: sorted.map(i => i[1].semPrazo),
+                    backgroundColor: colors.warning,
+                    borderRadius: 2
+                }
+            ]
         },
         options: {
             responsive: true, maintainAspectRatio: false,
             scales: {
-                y: { ticks: { color: colors.text }, grid: { color: colors.grid } },
-                x: { ticks: { color: colors.text }, grid: { display: false } }
+                x: { stacked: true, ticks: { color: colors.text }, grid: { display: false } },
+                y: { stacked: true, ticks: { color: colors.text }, grid: { color: colors.grid } }
             },
-            plugins: { legend: { display: false } }
+            plugins: { legend: { display: true, labels: { color: colors.text } } }
         }
     });
 }
