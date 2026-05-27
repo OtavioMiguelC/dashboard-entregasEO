@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,11 @@
     <!-- SheetJS for Excel Parsing -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <!-- Firebase SDKs -->
-    <script type="module" src="script.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-storage-compat.js"></script>
+    <!-- Logic Script -->
+    <script src="script.js" defer></script>
 </head>
 <body>
     <header class="topbar glass">
@@ -18,9 +22,7 @@
             <h1 class="logo-text">CONSOLIDA</h1>
             <span class="subtitle">BPO Logístico</span>
         </div>
-        
         <div class="header-actions">
-            <button id="themeToggle" class="btn btn-icon" title="Alternar Tema">☀️</button>
             <button id="loginBtn" class="btn btn-primary">Login Admin</button>
             <div id="adminPanel" class="hidden">
                 <span id="userEmail" class="user-email"></span>
@@ -28,6 +30,10 @@
                 <input type="file" id="excelUpload" accept=".xlsx, .xls" class="hidden-input">
                 <button id="logoutBtn" class="btn btn-icon" title="Sair">🚪</button>
             </div>
+            <label class="theme-switch" title="Alternar Tema" style="margin-left: 15px; margin-right: 0;">
+                <input type="checkbox" id="themeToggleCheckbox">
+                <div class="slider"></div>
+            </label>
         </div>
     </header>
 
@@ -62,6 +68,12 @@
                     <label>Buscar NF-e</label>
                     <input type="text" id="filterNfe" placeholder="Ex: 238895">
                 </div>
+                <div class="filter-group">
+                    <label>Mês de Emissão</label>
+                    <select id="filterMes">
+                        <option value="">Todos os Meses</option>
+                    </select>
+                </div>
                 <button id="applyFiltersBtn" class="btn btn-primary">Aplicar Filtros</button>
                 <button id="clearFiltersBtn" class="btn btn-secondary">Limpar</button>
             </div>
@@ -71,19 +83,31 @@
         <section class="kpi-section">
             <div class="kpi-card glass">
                 <h3>Total de NF-es</h3>
-                <p id="kpiTotalNfe" class="kpi-value">0</p>
+                <div class="kpi-value-row">
+                    <p id="kpiTotalNfe" class="kpi-value">0</p>
+                    <span id="kpiEvoNfe" class="kpi-evolution"></span>
+                </div>
             </div>
             <div class="kpi-card glass">
                 <h3>Total de CT-es</h3>
-                <p id="kpiTotalCte" class="kpi-value">0</p>
+                <div class="kpi-value-row">
+                    <p id="kpiTotalCte" class="kpi-value">0</p>
+                    <span id="kpiEvoCte" class="kpi-evolution"></span>
+                </div>
             </div>
             <div class="kpi-card glass">
                 <h3>SLA Global (No Prazo)</h3>
-                <p id="kpiSla" class="kpi-value">0%</p>
+                <div class="kpi-value-row">
+                    <p id="kpiSla" class="kpi-value">0%</p>
+                    <span id="kpiEvoSla" class="kpi-evolution"></span>
+                </div>
             </div>
             <div class="kpi-card glass alert-card">
                 <h3>NF-es sem CT-e</h3>
-                <p id="kpiSemCte" class="kpi-value">0</p>
+                <div class="kpi-value-row">
+                    <p id="kpiSemCte" class="kpi-value">0</p>
+                    <span id="kpiEvoSemCte" class="kpi-evolution"></span>
+                </div>
             </div>
         </section>
 
@@ -94,7 +118,7 @@
                 <canvas id="slaChart"></canvas>
             </div>
             <div class="chart-container glass">
-                <h3>Top 10 Regiões (Destino)</h3>
+                <h3>Top 10 Regiões (Gargalos)</h3>
                 <canvas id="regionsChart"></canvas>
             </div>
             <div class="chart-container glass full-width">
