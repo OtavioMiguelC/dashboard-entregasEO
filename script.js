@@ -710,3 +710,168 @@ adminExportBtn.addEventListener('click', () => {
     XLSX.utils.book_append_sheet(wb, ws, "Notas_Sem_Prazo");
     XLSX.writeFile(wb, "relatorio_sem_prazo_consolida.xlsx");
 });
+
+// --- SISTEMA DE ABAS E CENTRAL DE E-MAILS ---
+const tabBtnDashboard = document.getElementById('tabBtnDashboard');
+const tabBtnEmailCenter = document.getElementById('tabBtnEmailCenter');
+const dashboardSection = document.getElementById('dashboardSection');
+const emailCenterSection = document.getElementById('emailCenterSection');
+
+if (tabBtnDashboard && tabBtnEmailCenter) {
+    tabBtnDashboard.addEventListener('click', () => {
+        tabBtnDashboard.className = 'btn btn-primary';
+        tabBtnEmailCenter.className = 'btn btn-secondary';
+        dashboardSection.classList.remove('hidden');
+        emailCenterSection.classList.add('hidden');
+    });
+
+    tabBtnEmailCenter.addEventListener('click', () => {
+        tabBtnEmailCenter.className = 'btn btn-primary';
+        tabBtnDashboard.className = 'btn btn-secondary';
+        dashboardSection.classList.add('hidden');
+        emailCenterSection.classList.remove('hidden');
+        populateEmailTransp();
+    });
+}
+
+function populateEmailTransp() {
+    const emailSelectTransp = document.getElementById('emailSelectTransp');
+    if(!emailSelectTransp) return;
+    const currentVal = emailSelectTransp.value;
+    
+    const transpSet = new Set();
+    rawData.forEach(d => {
+        if (d.transportadora) transpSet.add(d.transportadora);
+    });
+    
+    emailSelectTransp.innerHTML = '<option value="">Escolha...</option>';
+    Array.from(transpSet).sort().forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t; opt.textContent = t;
+        emailSelectTransp.appendChild(opt);
+    });
+    
+    if (transpSet.has(currentVal)) {
+        emailSelectTransp.value = currentVal;
+    }
+}
+
+const btnGenerateEmail = document.getElementById('btnGenerateEmail');
+const btnCopyAndOpen = document.getElementById('btnCopyAndOpen');
+const emailHtmlContainer = document.getElementById('emailHtmlContainer');
+const emailHelpText = document.getElementById('emailHelpText');
+
+let currentGeneratedHtml = "";
+
+if (btnGenerateEmail) {
+    btnGenerateEmail.addEventListener('click', () => {
+        const transp = document.getElementById('emailSelectTransp').value;
+        if (!transp) return alert("Selecione uma transportadora primeiro.");
+        
+        const chkAtrasados = document.getElementById('chkAtrasados').checked;
+        const chkSemPrazo = document.getElementById('chkSemPrazo').checked;
+        const chkEntregueSemPrazo = document.getElementById('chkEntregueSemPrazo').checked;
+        
+        const allowedStatuses = [];
+        if (chkAtrasados) allowedStatuses.push('Atrasado');
+        if (chkSemPrazo) allowedStatuses.push('Sem prazo');
+        if (chkEntregueSemPrazo) allowedStatuses.push('Entregue sem prazo');
+        
+        if (allowedStatuses.length === 0) return alert("Selecione pelo menos um status para cobrar.");
+
+        const notasEmail = rawData.filter(d => d.transportadora === transp && allowedStatuses.includes(d.situacao));
+        
+        if (notasEmail.length === 0) {
+            emailHtmlContainer.innerHTML = '<p style="color: red; text-align: center; margin-top: 50px;">Nenhuma nota encontrada para os filtros selecionados.</p>';
+            btnCopyAndOpen.style.display = 'none';
+            emailHelpText.style.display = 'none';
+            return;
+        }
+
+        let html = `
+        <div style="font-family: Arial, sans-serif; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: #5E17EB; margin-bottom: 5px;">Relatório de Cobrança Logística</h2>
+                <h3 style="color: #666; margin-top: 0;">Transportadora: ${transp}</h3>
+            </div>
+            
+            <p>Olá equipe <strong>${transp}</strong>,</p>
+            <p>Identificamos <strong>${notasEmail.length}</strong> nota(s) fiscal(is) que requerem atualização de status ou justificativa de atraso.</p>
+            <p>Abaixo estão os detalhes para análise:</p>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px;">
+                <thead>
+                    <tr style="background-color: #5E17EB; color: white;">
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">NF-e</th>
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Emissão</th>
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Destino</th>
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Prazo Original</th>
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Status no Painel</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        notasEmail.forEach(n => {
+            let badgeColor = "#f59e0b";
+            if (n.situacao === 'Atrasado') badgeColor = "#ef4444";
+            else if (n.situacao === 'Entregue sem prazo') badgeColor = "#3b82f6";
+            
+            html += `
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>${n.nfe || '-'}</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${n.emissao || '-'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${n.destino || '-'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${n.prazoEntrega || '-'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                        <span style="background-color: ${badgeColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
+                            ${n.situacao}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                </tbody>
+            </table>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                <p style="margin: 0;">Atenciosamente,</p>
+                <p style="margin: 5px 0;"><strong>Equipe Consolida</strong></p>
+            </div>
+        </div>
+        `;
+        
+        currentGeneratedHtml = html;
+        emailHtmlContainer.innerHTML = html;
+        btnCopyAndOpen.style.display = 'block';
+        emailHelpText.style.display = 'block';
+    });
+}
+
+if (btnCopyAndOpen) {
+    btnCopyAndOpen.addEventListener('click', async () => {
+        try {
+            const htmlBlob = new Blob([currentGeneratedHtml], { type: "text/html" });
+            const plainBlob = new Blob(["Por favor, cole em um leitor de e-mails compatível com HTML."], { type: "text/plain" });
+            const data = [new ClipboardItem({ "text/html": htmlBlob, "text/plain": plainBlob })];
+            
+            await navigator.clipboard.write(data);
+            
+            const destinatarios = document.getElementById('emailDestinos').value.trim();
+            const transp = document.getElementById('emailSelectTransp').value;
+            const assunto = encodeURIComponent(`Cobrança Logística - Notas Pendentes (${transp})`);
+            
+            window.location.href = `mailto:${destinatarios}?subject=${assunto}`;
+            
+            const oldText = btnCopyAndOpen.textContent;
+            btnCopyAndOpen.textContent = "Copiado! Abra seu Outlook e cole (Ctrl+V)";
+            setTimeout(() => { btnCopyAndOpen.textContent = oldText; }, 5000);
+            
+        } catch (err) {
+            console.error("Erro ao copiar para clipboard: ", err);
+            alert("Erro ao copiar a tabela HTML para a memória. O seu navegador pode ter bloqueado o recurso.");
+        }
+    });
+}

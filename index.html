@@ -77,7 +77,12 @@
             </div>
         </header>
 
-        <main class="dashboard-container">
+        <div class="tabs-container" style="max-width: 1400px; margin: 20px auto 0 auto; display: flex; gap: 10px; padding: 0 20px;">
+            <button class="btn btn-primary" id="tabBtnDashboard">Painel Principal</button>
+            <button class="btn btn-secondary" id="tabBtnEmailCenter"><i class="fas fa-envelope"></i> Central de Cobrança</button>
+        </div>
+
+        <main class="dashboard-container" id="dashboardSection">
             <!-- Global Filters -->
             <section class="filters-section glass">
                 <div class="filters-grid">
@@ -220,6 +225,59 @@
                             <!-- Populated via JS -->
                         </tbody>
                     </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- ABA CENTRAL DE COBRANÇA -->
+        <main class="dashboard-container hidden" id="emailCenterSection">
+            <section class="glass" style="padding: 2rem;">
+                <h2 style="margin-bottom: 1.5rem; color: var(--primary);"><i class="fas fa-paper-plane"></i> Gerador Automático de E-mails</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                    <!-- Coluna de Controles -->
+                    <div class="email-controls">
+                        <div class="filter-group" style="margin-bottom: 1.5rem;">
+                            <label>Selecione a Transportadora</label>
+                            <select id="emailSelectTransp" class="form-control" style="width: 100%;">
+                                <option value="">Escolha...</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group" style="margin-bottom: 1.5rem;">
+                            <label>E-mails de Destino (separados por ponto e vírgula)</label>
+                            <input type="text" id="emailDestinos" class="form-control" placeholder="ex: contato@transp.com; gerente@transp.com" style="width: 100%;">
+                        </div>
+
+                        <div class="filter-group" style="margin-bottom: 1.5rem;">
+                            <label>O que você deseja cobrar?</label>
+                            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="chkAtrasados" checked> Notas Atrasadas
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="chkSemPrazo" checked> Notas Sem Prazo
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="chkEntregueSemPrazo"> Entregues Sem Prazo
+                                </label>
+                            </div>
+                        </div>
+
+                        <button id="btnGenerateEmail" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">1. Gerar Prévia</button>
+                        <button id="btnCopyAndOpen" class="btn btn-secondary" style="width: 100%; background: #10b981; color: white; border: none; display: none;">2. Copiar HTML e Abrir Outlook</button>
+                        <p id="emailHelpText" style="font-size: 0.85rem; color: var(--text-muted); display: none; margin-top: 0.5rem; line-height: 1.4;">
+                            Após clicar no botão verde, seu Outlook será aberto. <strong>Basta clicar no corpo do e-mail em branco e dar um Ctrl+V (Colar)</strong> para inserir a tabela formatada.
+                        </p>
+                    </div>
+
+                    <!-- Coluna de Preview -->
+                    <div class="email-preview">
+                        <h3 style="font-size: 1rem; color: var(--text-muted); margin-bottom: 10px;">Prévia do E-mail HTML:</h3>
+                        <div id="emailHtmlContainer" style="background: white; padding: 20px; border: 1px solid #ccc; border-radius: 8px; min-height: 400px; color: #333; font-family: Arial, sans-serif; overflow-y: auto;">
+                            <p style="color: #999; text-align: center; margin-top: 50px;">Selecione uma transportadora e clique em "Gerar Prévia".</p>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
