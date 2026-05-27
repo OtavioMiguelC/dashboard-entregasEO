@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consolida - Dashboard Logístico</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS for Excel Parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <!-- Firebase SDKs -->
+    <script type="module" src="script.js" defer></script>
+</head>
+<body>
+    <header class="topbar glass">
+        <div class="logo-container">
+            <h1 class="logo-text">CONSOLIDA</h1>
+            <span class="subtitle">BPO Logístico</span>
+        </div>
+        
+        <div class="header-actions">
+            <button id="themeToggle" class="btn btn-icon" title="Alternar Tema">☀️</button>
+            <button id="loginBtn" class="btn btn-primary">Login Admin</button>
+            <div id="adminPanel" class="hidden">
+                <span id="userEmail" class="user-email"></span>
+                <label for="excelUpload" class="btn btn-secondary">Upload Excel</label>
+                <input type="file" id="excelUpload" accept=".xlsx, .xls" class="hidden-input">
+                <button id="logoutBtn" class="btn btn-icon" title="Sair">🚪</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <!-- Global Filters -->
+        <section class="filters-section glass">
+            <h2>Filtros Globais</h2>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>Transportadora</label>
+                    <select id="filterTransportadora">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Situação (SLA)</label>
+                    <select id="filterSituacao">
+                        <option value="">Todas</option>
+                        <option value="No prazo">No prazo</option>
+                        <option value="Atrasado">Atrasado</option>
+                        <option value="Sem prazo">Sem prazo</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>NF-e sem CT-e</label>
+                    <select id="filterSemCte">
+                        <option value="">Todos</option>
+                        <option value="sim">Apenas sem CT-e</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Buscar NF-e</label>
+                    <input type="text" id="filterNfe" placeholder="Ex: 238895">
+                </div>
+                <button id="applyFiltersBtn" class="btn btn-primary">Aplicar Filtros</button>
+                <button id="clearFiltersBtn" class="btn btn-secondary">Limpar</button>
+            </div>
+        </section>
+
+        <!-- KPI Cards -->
+        <section class="kpi-section">
+            <div class="kpi-card glass">
+                <h3>Total de NF-es</h3>
+                <p id="kpiTotalNfe" class="kpi-value">0</p>
+            </div>
+            <div class="kpi-card glass">
+                <h3>Total de CT-es</h3>
+                <p id="kpiTotalCte" class="kpi-value">0</p>
+            </div>
+            <div class="kpi-card glass">
+                <h3>SLA Global (No Prazo)</h3>
+                <p id="kpiSla" class="kpi-value">0%</p>
+            </div>
+            <div class="kpi-card glass alert-card">
+                <h3>NF-es sem CT-e</h3>
+                <p id="kpiSemCte" class="kpi-value">0</p>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-section">
+            <div class="chart-container glass">
+                <h3>Distribuição de SLA</h3>
+                <canvas id="slaChart"></canvas>
+            </div>
+            <div class="chart-container glass">
+                <h3>Top 10 Regiões (Destino)</h3>
+                <canvas id="regionsChart"></canvas>
+            </div>
+            <div class="chart-container glass full-width">
+                <h3>Gargalos e Atrasos por Transportadora</h3>
+                <canvas id="bottlenecksChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Ranking Section -->
+        <section class="ranking-section glass">
+            <div class="ranking-header">
+                <h2>Performance de Transportadores (Piores ➔ Melhores)</h2>
+                <button id="exportBtn" class="btn btn-secondary">Exportar Relatório</button>
+            </div>
+            <div class="table-responsive">
+                <table id="rankingTable">
+                    <thead>
+                        <tr>
+                            <th>Transportadora</th>
+                            <th>Total Notas</th>
+                            <th>Atrasadas</th>
+                            <th>Sem Prazo</th>
+                            <th>% Atraso</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal hidden">
+        <div class="modal-content glass">
+            <h2>Acesso Administrativo</h2>
+            <div class="input-group">
+                <label>E-mail</label>
+                <input type="email" id="loginEmail" placeholder="admin@consolida.com">
+            </div>
+            <div class="input-group">
+                <label>Senha</label>
+                <input type="password" id="loginPassword" placeholder="******">
+            </div>
+            <p id="loginError" class="error-text"></p>
+            <div class="modal-actions">
+                <button id="doLoginBtn" class="btn btn-primary">Entrar</button>
+                <button id="closeModalBtn" class="btn btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
