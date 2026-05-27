@@ -191,6 +191,29 @@
                     </table>
                 </div>
             </section>
+
+            <!-- Admin Exclusive Reports -->
+            <section id="adminReportsSection" class="ranking-section glass hidden" style="margin-top: 2rem;">
+                <div class="ranking-header">
+                    <h2><i class="fas fa-lock" style="color: var(--warning); margin-right: 8px;"></i> Painel Exclusivo (Admin) - Gargalos Sem Prazo</h2>
+                    <button class="btn btn-primary" id="adminExportBtn"><i class="fas fa-file-excel"></i> Exportar Base Sem Prazo</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Transportadora</th>
+                                <th>Cidade de Destino</th>
+                                <th>Qtd Notas (Sem Prazo)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminRankingBody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </main>
     </div>
 

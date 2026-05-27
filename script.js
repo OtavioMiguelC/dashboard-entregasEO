@@ -31,6 +31,10 @@ const applyFiltersBtn = document.getElementById('applyFiltersBtn');
 const clearFiltersBtn = document.getElementById('clearFiltersBtn');
 const exportBtn = document.getElementById('exportBtn');
 
+const adminReportsSection = document.getElementById('adminReportsSection');
+const adminRankingBody = document.getElementById('adminRankingBody');
+const adminExportBtn = document.getElementById('adminExportBtn');
+
 const ADMIN_EMAIL = "otavio@oconsolida.com";
 
 // Helper para parse de data
@@ -76,8 +80,10 @@ auth.onAuthStateChanged(user => {
         
         if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
             uploadContainer.classList.remove('hidden');
+            adminReportsSection.classList.remove('hidden');
         } else {
             uploadContainer.classList.add('hidden');
+            adminReportsSection.classList.add('hidden');
         }
         
         loadDataFromRTDB();
@@ -296,6 +302,7 @@ function updateDashboard() {
     renderRegionsChart();
     renderBottlenecksChart();
     renderRanking();
+    renderAdminReports();
 }
 
 function updateKPIs() {
@@ -565,6 +572,38 @@ function renderRanking() {
     });
 }
 
+function renderAdminReports() {
+    if (firebase.auth().currentUser && firebase.auth().currentUser.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) return;
+    
+    adminRankingBody.innerHTML = '';
+    
+    // Agrupa notas Sem Prazo por Transportadora e Cidade
+    const stats = {};
+    filteredData.forEach(d => {
+        if (d.situacao === 'Sem prazo') {
+            const key = `${d.transportadora || 'N/A'}|${d.destino || 'N/A'}`;
+            if (!stats[key]) stats[key] = { transp: d.transportadora || 'N/A', cidade: d.destino || 'N/A', count: 0 };
+            stats[key].count++;
+        }
+    });
+
+    const ranking = Object.values(stats).sort((a, b) => b.count - a.count);
+
+    ranking.forEach(r => {
+        const tr = document.createElement('tr');
+        let statusClass = 'status-warning';
+        if (r.count > 10) statusClass = 'status-critical';
+        
+        tr.innerHTML = `
+            <td>${r.transp}</td>
+            <td>${r.cidade}</td>
+            <td><strong>${r.count}</strong></td>
+            <td><span class="status-badge ${statusClass}">Aguardando</span></td>
+        `;
+        adminRankingBody.appendChild(tr);
+    });
+}
+
 // Exportação com fidelidade 100% (usando Array of Arrays)
 exportBtn.addEventListener('click', () => {
     if(filteredData.length === 0) return alert('Não há dados para exportar.');
@@ -582,4 +621,21 @@ exportBtn.addEventListener('click', () => {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Relatorio_Filtrado");
     XLSX.writeFile(wb, "relatorio_consolida.xlsx");
+});
+
+adminExportBtn.addEventListener('click', () => {
+    const semPrazoData = filteredData.filter(d => d.situacao === 'Sem prazo');
+    if(semPrazoData.length === 0) return alert('Não há notas "Sem prazo" neste filtro.');
+    
+    // A linha 0 é o cabeçalho original com a exata ordem do Excel!
+    const dataToExport = [originalJsonData[0]];
+    
+    semPrazoData.forEach(d => {
+        dataToExport.push(originalJsonData[d._originalIndex]);
+    });
+    
+    const ws = XLSX.utils.aoa_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Notas_Sem_Prazo");
+    XLSX.writeFile(wb, "relatorio_sem_prazo_consolida.xlsx");
 });
