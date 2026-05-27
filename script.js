@@ -792,57 +792,126 @@ if (btnGenerateEmail) {
             return;
         }
 
+        const countAtrasados = notasEmail.filter(n => n.situacao === 'Atrasado').length;
+        const countSemPrazo = notasEmail.filter(n => n.situacao === 'Sem prazo').length;
+        const countEntSemPrazo = notasEmail.filter(n => n.situacao === 'Entregue sem prazo').length;
+
         let html = `
-        <div style="font-family: Arial, sans-serif; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px;">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <h2 style="color: #5E17EB; margin-bottom: 5px;">Relatório de Cobrança Logística</h2>
-                <h3 style="color: #666; margin-top: 0;">Transportadora: ${transp}</h3>
-            </div>
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; color: #333; max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background-color: #ffffff;">
             
-            <p>Olá equipe <strong>${transp}</strong>,</p>
-            <p>Identificamos <strong>${notasEmail.length}</strong> nota(s) fiscal(is) que requerem atualização de status ou justificativa de atraso.</p>
-            <p>Abaixo estão os detalhes para análise:</p>
-            
-            <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px;">
-                <thead>
-                    <tr style="background-color: #5E17EB; color: white;">
-                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">NF-e</th>
-                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Emissão</th>
-                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Destino</th>
-                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Prazo Original</th>
-                        <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Status no Painel</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <!-- Cabeçalho -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #5E17EB; padding: 25px 30px;">
+                <tr>
+                    <td style="color: white;">
+                        <h2 style="margin: 0; font-size: 22px; font-weight: 700;">Consolida — Relatório de Performance</h2>
+                        <p style="margin: 5px 0 0 0; font-size: 14px; color: #e9d5ff;">Farol de entregas por status — ${transp}</p>
+                    </td>
+                    <td align="right">
+                        <img src="https://raw.githubusercontent.com/OtavioMiguelC/dashboard-entregasEO/main/img/Consolida.png" alt="Consolida" style="height: 40px; background: white; padding: 8px 15px; border-radius: 6px; display: block;">
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Corpo -->
+            <div style="padding: 30px;">
+                <h3 style="margin-top: 0; font-size: 18px; color: #2d3748;">Bom dia, equipe <strong>${transp}</strong>,</h3>
+                <p style="font-size: 15px; color: #4a5568; line-height: 1.5; margin-bottom: 25px;">
+                    Acompanhamos a performance das entregas usando um <strong>farol por cores</strong> para leitura executiva. 
+                    Abaixo constam as notas que exigem atualização ou justificativa no sistema.
+                </p>
+
+                <!-- Alertas -->
+                `;
+
+        if (countAtrasados > 0) {
+            html += `
+                <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px 20px; margin-bottom: 15px;">
+                    <h4 style="margin: 0 0 8px 0; color: #dc2626; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">⚠️ Atenção Urgente</h4>
+                    <p style="margin: 0; color: #991b1b; font-size: 15px;">
+                        Há <strong>${countAtrasados} NFs em atraso</strong> aguardando retorno e ação imediata.
+                    </p>
+                </div>
+            `;
+        }
+
+        if (countSemPrazo > 0) {
+            html += `
+                <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 15px 20px; margin-bottom: 15px;">
+                    <h4 style="margin: 0 0 8px 0; color: #d97706; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">⏳ Prazos Faltando</h4>
+                    <p style="margin: 0; color: #92400e; font-size: 15px;">
+                        Há <strong>${countSemPrazo} entregas</strong> que ainda não possuem previsão registrada.
+                    </p>
+                </div>
+            `;
+        }
+        
+        if (countEntSemPrazo > 0) {
+            html += `
+                <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 15px 20px; margin-bottom: 15px;">
+                    <h4 style="margin: 0 0 8px 0; color: #2563eb; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">📋 Validação Necessária</h4>
+                    <p style="margin: 0; color: #1e40af; font-size: 15px;">
+                        Há <strong>${countEntSemPrazo} entregas</strong> marcadas como concluídas, mas sem o registro original do prazo.
+                    </p>
+                </div>
+            `;
+        }
+
+        html += `
+                <!-- Tabela -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 30px; border-collapse: collapse; font-size: 13px;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left; color: #4a5568; font-weight: 600;">NF-e</th>
+                            <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left; color: #4a5568; font-weight: 600;">CT-e</th>
+                            <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left; color: #4a5568; font-weight: 600;">Destino</th>
+                            <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left; color: #4a5568; font-weight: 600;">Previsão</th>
+                            <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; color: #4a5568; font-weight: 600;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
         `;
         
         notasEmail.forEach(n => {
             let badgeColor = "#f59e0b";
-            if (n.situacao === 'Atrasado') badgeColor = "#ef4444";
-            else if (n.situacao === 'Entregue sem prazo') badgeColor = "#3b82f6";
+            let badgeBg = "#fef3c7";
+            let textColor = "#b45309";
+            
+            if (n.situacao === 'Atrasado') {
+                badgeColor = "#ef4444"; badgeBg = "#fee2e2"; textColor = "#b91c1c";
+            } else if (n.situacao === 'Entregue sem prazo') {
+                badgeColor = "#3b82f6"; badgeBg = "#dbeafe"; textColor = "#1d4ed8";
+            }
             
             html += `
-                <tr>
-                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>${n.nfe || '-'}</strong></td>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${n.emissao || '-'}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${n.destino || '-'}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${n.prazoEntrega || '-'}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
-                        <span style="background-color: ${badgeColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
-                            ${n.situacao}
-                        </span>
-                    </td>
-                </tr>
+                        <tr>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; color: #1a202c; font-weight: 500;">${n.nfe || '-'}</td>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; color: #4a5568;">${n.docFrete || '-'}</td>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; color: #4a5568;">${n.destino || '-'}</td>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; color: #4a5568;">${n.prazoEntrega || '-'}</td>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #edf2f7; text-align: center;">
+                                <span style="background-color: ${badgeBg}; color: ${textColor}; border: 1px solid ${badgeColor}; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase;">
+                                    ${n.situacao}
+                                </span>
+                            </td>
+                        </tr>
             `;
         });
         
         html += `
-                </tbody>
-            </table>
-            
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-                <p style="margin: 0;">Atenciosamente,</p>
-                <p style="margin: 5px 0;"><strong>Equipe Consolida</strong></p>
+                    </tbody>
+                </table>
+                
+                <!-- Rodapé e Botão WhatsApp -->
+                <div style="margin-top: 40px; text-align: center;">
+                    <a href="https://wa.me/5547988411224" target="_blank" style="background-color: #25D366; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 15px; display: inline-block;">
+                        💬 Fale Conosco no WhatsApp
+                    </a>
+                </div>
+
+                <div style="margin-top: 35px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center;">
+                    <p style="margin: 0; color: #4a5568; font-size: 14px;">Atenciosamente,</p>
+                    <p style="margin: 5px 0; color: #1a202c; font-weight: 600; font-size: 15px;">Equipe Consolida</p>
+                </div>
             </div>
         </div>
         `;
