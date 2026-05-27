@@ -212,6 +212,16 @@ function processDataEngine() {
     const idxUf = getIdx('uf');
     const idxTransp = getIdx('transportadora') !== -1 ? getIdx('transportadora') : getIdx('transp');
     const idxCte = getIdx('ct-e') !== -1 ? getIdx('ct-e') : (getIdx('doc.frete') !== -1 ? getIdx('doc.frete') : getIdx('frete'));
+    const idxSerieCte = getIdx('série ct-e') !== -1 ? getIdx('série ct-e') : getIdx('serie');
+    const idxEntrega = getIdx('data entrega') !== -1 ? getIdx('data entrega') : getIdx('entrega');
+
+    rawData = [];
+    
+    // Começa do índice 1 (pula o cabeçalho)
+    for (let i = 1; i < originalJsonData.length; i++) {
+        const row = originalJsonData[i];
+        if (!row || row.length === 0) continue;
+
         const prazoStr = idxPrazo !== -1 ? row[idxPrazo] : null;
         const entregaStr = idxEntrega !== -1 ? row[idxEntrega] : null;
         const sitOriginal = idxSitOriginal !== -1 ? row[idxSitOriginal] : '';
