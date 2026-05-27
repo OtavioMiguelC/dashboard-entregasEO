@@ -622,7 +622,7 @@ function renderAdminReports() {
     // Agrupa notas Sem Prazo por Transportadora e Cidade
     const stats = {};
     filteredData.forEach(d => {
-        if (d.situacao === 'Sem prazo') {
+        if (d.situacao === 'Sem prazo' || d.situacao === 'Entregue sem prazo') {
             const key = `${d.transportadora || 'N/A'}|${d.destino || 'N/A'}`;
             if (!stats[key]) stats[key] = { transp: d.transportadora || 'N/A', cidade: d.destino || 'N/A', count: 0 };
             stats[key].count++;
@@ -666,8 +666,8 @@ exportBtn.addEventListener('click', () => {
 });
 
 adminExportBtn.addEventListener('click', () => {
-    const semPrazoData = filteredData.filter(d => d.situacao === 'Sem prazo');
-    if(semPrazoData.length === 0) return alert('Não há notas "Sem prazo" neste filtro.');
+    const semPrazoData = filteredData.filter(d => d.situacao === 'Sem prazo' || d.situacao === 'Entregue sem prazo');
+    if(semPrazoData.length === 0) return alert('Não há notas "Sem prazo" ou "Entregue sem prazo" neste filtro.');
     
     // A linha 0 é o cabeçalho original com a exata ordem do Excel!
     const dataToExport = [originalJsonData[0]];
