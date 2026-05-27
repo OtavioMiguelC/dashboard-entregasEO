@@ -60,12 +60,12 @@ body {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
+    box-shadow: 0 0 40px rgba(94, 23, 235, 0.1), var(--glass-shadow);
     border-radius: 16px;
 }
 
 /* Header */
-.topbar {
+.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -248,7 +248,7 @@ body {
 }
 .full-width {
     grid-column: 1 / -1;
-    height: 400px;
+    height: 600px;
 }
 canvas {
     width: 100% !important;
